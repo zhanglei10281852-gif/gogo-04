@@ -1,0 +1,80 @@
+Go result repository container validation
+task_id: 4
+task_type: bugfix
+platform: linux/arm64
+image: gomark-task-4-arm64:ca48dd1860e8
+started_at: 2026-08-14T21:29:41.065Z
+finished_at: 2026-08-14T22:03:04.462Z
+status: pass
+verification_1: expected_exit=0; actual_exit=0; matched=true; command=go test -count=1 -v -run "TestCreateBookingAcceptsBackToBackSlots|TestCreateBookingRejectsOverlappingSlots|TestCreateBookingIgnoresCancelledAndOtherDays" ./internal/handlers/
+verification_2: expected_exit=0; actual_exit=0; matched=true; command=go test -buildvcs=false -count=1 ./...
+
+===== command 1 =====
+phase: result_verification
+$ docker run --rm --network none --platform linux/arm64 --mount type=bind,source=E:\gomark\tmp\task-package-4-6722a7a4-5bfb-4bc1-84ef-ef903bc81e2c\trusted-test.patch,target=/tmp/gomark-trusted-test.patch,readonly -e GOTOOLCHAIN=local -e GOPROXY=off -e GOSUMDB=off gomark-task-4-arm64:ca48dd1860e8 bash -c set -o pipefail
+git apply --check /tmp/gomark-trusted-test.patch >/dev/null || exit 97
+git apply /tmp/gomark-trusted-test.patch >/dev/null || exit 98
+go test -count=1 -v -run "TestCreateBookingAcceptsBackToBackSlots|TestCreateBookingRejectsOverlappingSlots|TestCreateBookingIgnoresCancelledAndOtherDays" ./internal/handlers/
+cwd: E:\gomark\tmp\task-package-4-6722a7a4-5bfb-4bc1-84ef-ef903bc81e2c\source
+actual_exit: 0
+--- stdout ---
+=== RUN   TestCreateBookingAcceptsBackToBackSlots
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.691ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.303ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.280ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.297ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+--- PASS: TestCreateBookingAcceptsBackToBackSlots (0.30s)
+=== RUN   TestCreateBookingRejectsOverlappingSlots
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.672ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+--- PASS: TestCreateBookingRejectsOverlappingSlots (0.05s)
+=== RUN   TestCreateBookingIgnoresCancelledAndOtherDays
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.270ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.309ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-24" ORDER BY `holidays`.`id` LIMIT 1
+
+2026/08/14 21:54:22 /app/internal/pricing/engine.go:180 record not found
+[0.263ms] [rows:0] SELECT * FROM `holidays` WHERE date = "2026-06-23" ORDER BY `holidays`.`id` LIMIT 1
+--- PASS: TestCreateBookingIgnoresCancelledAndOtherDays (0.07s)
+PASS
+ok  	venue-booking-admin/internal/handlers	0.795s
+
+--- stderr ---
+warning: internal/handlers/booking_conflict_test.go has type 100755, expected 100644
+warning: internal/handlers/booking_conflict_test.go has type 100755, expected 100644
+
+
+===== command 2 =====
+phase: result_verification
+$ docker run --rm --network none --platform linux/arm64 --mount type=bind,source=E:\gomark\tmp\task-package-4-6722a7a4-5bfb-4bc1-84ef-ef903bc81e2c\trusted-test.patch,target=/tmp/gomark-trusted-test.patch,readonly -e GOTOOLCHAIN=local -e GOPROXY=off -e GOSUMDB=off gomark-task-4-arm64:ca48dd1860e8 bash -c set -o pipefail
+git apply --check /tmp/gomark-trusted-test.patch >/dev/null || exit 97
+git apply /tmp/gomark-trusted-test.patch >/dev/null || exit 98
+go test -buildvcs=false -count=1 ./...
+cwd: E:\gomark\tmp\task-package-4-6722a7a4-5bfb-4bc1-84ef-ef903bc81e2c\source
+actual_exit: 0
+--- stdout ---
+?   	venue-booking-admin	[no test files]
+?   	venue-booking-admin/internal/auth	[no test files]
+?   	venue-booking-admin/internal/config	[no test files]
+?   	venue-booking-admin/internal/db	[no test files]
+ok  	venue-booking-admin/internal/handlers	0.821s
+?   	venue-booking-admin/internal/models	[no test files]
+ok  	venue-booking-admin/internal/pricing	1.009s
+?   	venue-booking-admin/internal/seed	[no test files]
+
+--- stderr ---
+warning: internal/handlers/booking_conflict_test.go has type 100755, expected 100644
+warning: internal/handlers/booking_conflict_test.go has type 100755, expected 100644
+

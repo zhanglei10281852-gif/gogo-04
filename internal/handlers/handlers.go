@@ -188,11 +188,13 @@ func (h *Handler) CreateBooking(c *gin.Context) {
 		return
 	}
 
-	// 时段冲突校验：同场馆同日，已有非取消预订时段不得与本次重叠
+	// 时段冲突校验：同场馆同日，已有非取消预订时段不得与本次重叠。
+	// 时段为半开区间 [start_hour, end_hour)，故首尾相接（一者的 end 等于
+	// 另一者的 start）不算重叠，只有真正相交才判定为冲突。
 	var conflict int64
 	h.DB.Model(&models.Booking{}).
 		Where("venue_id = ? AND book_date = ? AND status <> ?", req.VenueID, req.BookDate, "cancelled").
-		Where("start_hour < ? AND end_hour >= ?", req.EndHour, req.StartHour).
+		Where("start_hour < ? AND end_hour > ?", req.EndHour, req.StartHour).
 		Count(&conflict)
 	if conflict > 0 {
 		c.JSON(http.StatusConflict, gin.H{"detail": "该时段已被预订"})

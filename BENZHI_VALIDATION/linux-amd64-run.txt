@@ -1,0 +1,47 @@
+Go result repository container validation
+task_id: 4
+task_type: bugfix
+platform: linux/amd64
+image: gomark-task-4-amd64:ca48dd1860e8
+started_at: 2026-08-14T21:24:22.569Z
+finished_at: 2026-08-14T21:29:40.997Z
+status: pass
+
+===== command 1 =====
+phase: health_run
+$ docker run --rm --network none --platform linux/amd64 -e GOTOOLCHAIN=local -e GOPROXY=off -e GOSUMDB=off gomark-task-4-amd64:ca48dd1860e8 bash -c set -euo pipefail
+cd '/app'
+package_name="$(GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go list -f '{{.Name}}' . 2>/dev/null || true)"
+if [ "$package_name" = "main" ]; then
+  echo "$ go run ."
+  rm -f '/tmp/gomark-go-run-0.log'
+  GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go run . >'/tmp/gomark-go-run-0.log' 2>&1 &
+  run_pid=$!
+  sleep 5
+  if kill -0 "$run_pid" 2>/dev/null; then
+    cat '/tmp/gomark-go-run-0.log'
+    kill -TERM "$run_pid" 2>/dev/null || true
+    wait "$run_pid" 2>/dev/null || true
+    echo "go run . started successfully and stayed running for 5 seconds"
+  else
+    set +e
+    wait "$run_pid"
+    run_status=$?
+    set -e
+    cat '/tmp/gomark-go-run-0.log'
+    if [ "$run_status" -ne 0 ]; then exit "$run_status"; fi
+    echo "go run . completed successfully"
+  fi
+else
+  echo "module . is not a runnable root main package; go run skipped"
+fi
+cwd: E:\gomark\tmp\task-package-4-6722a7a4-5bfb-4bc1-84ef-ef903bc81e2c\source
+actual_exit: 0
+--- stdout ---
+$ go run .
+2026/08/14 21:26:33 等待数据库... (1) dial tcp 127.0.0.1:3306: connect: connection refused
+2026/08/14 21:26:35 等待数据库... (2) dial tcp 127.0.0.1:3306: connect: connection refused
+go run . started successfully and stayed running for 5 seconds
+
+--- stderr ---
+
