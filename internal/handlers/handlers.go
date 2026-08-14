@@ -192,7 +192,7 @@ func (h *Handler) CreateBooking(c *gin.Context) {
 	var conflict int64
 	h.DB.Model(&models.Booking{}).
 		Where("venue_id = ? AND book_date = ? AND status <> ?", req.VenueID, req.BookDate, "cancelled").
-		Where("start_hour < ? AND end_hour >= ?", req.EndHour, req.StartHour).
+		Where("start_hour < ? AND end_hour > ?", req.EndHour, req.StartHour).
 		Count(&conflict)
 	if conflict > 0 {
 		c.JSON(http.StatusConflict, gin.H{"detail": "该时段已被预订"})
